@@ -1,0 +1,28 @@
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.exe
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.deps.json
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.runtimeconfig.json
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.dll
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.pdb
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.AssemblyInfoInputs.cache
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.AssemblyInfo.cs
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.csproj.CoreCompileInputs.cache
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.dll
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\refint\PersonalFinanceTracker.dll
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.pdb
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.genruntimeconfig.cache
+C:\Users\asus\Desktop\Programming\Backend\upskilling .net advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\ref\PersonalFinanceTracker.dll
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.AssemblyInfoInputs.cache
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.AssemblyInfo.cs
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.csproj.CoreCompileInputs.cache
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.dll
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\refint\PersonalFinanceTracker.dll
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.pdb
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.exe
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.deps.json
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.runtimeconfig.json
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.dll
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\bin\Debug\net8.0\PersonalFinanceTracker.pdb
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\PersonalFinanceTracker.genruntimeconfig.cache
+C:\Users\asus\Desktop\Programming\Backend\upskilling-net-advanced\Projects\PersonalFinanceTracker\PersonalFinanceTracker\obj\Debug\net8.0\ref\PersonalFinanceTracker.dll
