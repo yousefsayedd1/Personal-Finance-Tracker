@@ -5,20 +5,14 @@ using System.Text.Json.Serialization;
 
 namespace PersonalFinanceTracker
 {
-    public class BudgetEventArgs : EventArgs
-    {
-        public decimal TotalExpenses;
-        public decimal buget;
-        public string categoryName;
-
-    }
     public class Account
     {
         public IUserInterface _userInterface  ;
-        public event Action<BudgetEventArgs> budgetExceeded;
+        public event Func<BudgetEventArgs, Task> BudgetExceeded;
+
 
         public Account() {
-            budgetExceeded += BudgetExceededNotify;
+            BudgetExceeded += BudgetExceededNotify;
         }
         public Account(IUserInterface userInterface) : this()
         {
@@ -37,10 +31,10 @@ namespace PersonalFinanceTracker
         [JsonIgnore]
         public IEnumerable<Expense> expenses => _expenses;
         [JsonInclude]
-        public List<string> categorys = new List<string>() {};
+        public List<string> Categories { get; private set; } = new List<string>() {};
 
         [JsonInclude]
-        Dictionary<string, KeyValuePair<decimal,decimal>> category_budget = new Dictionary<string, KeyValuePair<decimal, decimal>>();
+        public Dictionary<string, KeyValuePair<decimal,decimal>> CategoryBudget { get; private set; } = new Dictionary<string, KeyValuePair<decimal, decimal>>();
 
         [JsonInclude]
         public decimal Balance { get; private set; } = 0;
@@ -57,113 +51,180 @@ namespace PersonalFinanceTracker
         }
         public void AddIncome(Income income)
         {
-            _incomes.Add(income);
-            if (!categorys.Contains(income.Category))
+            try
             {
-                categorys.Add(income.Category);
+                _incomes.Add(income);
+                if (!Categories.Contains(income.Category))
+                {
+                    Categories.Add(income.Category);
+                }
+                UpdateBalance();
+                UpdateTotalIncomeAmount();
+            }catch(Exception ex)
+            {
+                _userInterface.DisplayMessage($"Error Adding income: {ex.Message}");
             }
-            updateBalance();
-            updateTotalIncomes();
         }
-     public void DeleteIncome(int incomeNumber)
+        public void DeleteIncome(int incomeNumber)
         {
-            _incomes.Remove(_incomes[incomeNumber-1]);
-            updateTotalIncomes();
+            try
+            {
+                _incomes.Remove(_incomes[incomeNumber - 1]);
+                UpdateTotalIncomeAmount();
+            }catch(Exception ex)
+            {
+                _userInterface.DisplayMessage($"Error Deleting income: {ex.Message}");
+            }
 
         }
         public void UpdateIncome(int incomeNumber)
         {
-            incomeNumber--;
-            Income income = _incomes[incomeNumber];
+            try
+            {
+                incomeNumber--;
+                Income income = _incomes[incomeNumber];
 
-            _userInterface.DisplayMessage("Enter new Amount:");
-            decimal newAmount = _userInterface.ReadDecimal(0);
-            _userInterface.DisplayMessage("Enter new Source:");
-            string newSource = _userInterface.ReadString();
-            DateTime newDate = _userInterface.ReadDate();
-            _incomes[incomeNumber] = new Income(newAmount, newSource, newDate);
-            updateBalance();
-            updateTotalIncomes();
-
+                _userInterface.DisplayMessage("Enter new Amount:");
+                decimal newAmount = _userInterface.ReadDecimal(0);
+                _userInterface.DisplayMessage("Enter new Source:");
+                string newSource = _userInterface.ReadString();
+                DateTime newDate = _userInterface.ReadDate();
+                _incomes[incomeNumber] = new Income(newAmount, newSource, newDate);
+                UpdateBalance();
+                UpdateTotalIncomeAmount();
+            }
+            catch (Exception ex)
+            {
+                _userInterface.DisplayMessage($"Error updating income: {ex.Message}");
+            }
         }
         public void AddExpense(Expense expense)
         {
-            _expenses.Add(expense);
-            updateBalance();
-            updateTotalExpenses();
-            if (category_budget.ContainsKey( expense.Category))
+            try
             {
-                category_budget[expense.Category] = new KeyValuePair<decimal, decimal>(category_budget[expense.Category].Key + expense.Amount, category_budget[expense.Category].Value);
-                if (category_budget[expense.Category].Key + 100 >= category_budget[expense.Category].Value) budgetExceeded?.Invoke(new BudgetEventArgs() { TotalExpenses = category_budget[expense.Category].Key, buget = category_budget[expense.Category].Value, categoryName = expense.Category });
-
+                _expenses.Add(expense);
+                UpdateBalance();
+                UpdateTotalExpenseAmount();
+                if (CategoryBudget.ContainsKey(expense.Category))
+                {
+                    var currentBudget = CategoryBudget[expense.Category];
+                    var updatedExpenses = currentBudget.Key + expense.Amount;
+                    CategoryBudget[expense.Category] = new KeyValuePair<decimal, decimal>(updatedExpenses, currentBudget.Value);
+                    if (updatedExpenses + 100 >= currentBudget.Value)
+                    {
+                        BudgetExceeded?.Invoke(new BudgetEventArgs
+                        {
+                            TotalExpenses = updatedExpenses,
+                            budget = currentBudget.Value,
+                            categoryName = expense.Category
+                        });
+                    }
+                }
             }
-        }
-        private  void updateTotalExpenses()
-        {
-            TotalExpenses = _expenses.Sum(expense => expense.Amount);
-
-        }
-        private void updateTotalIncomes()
-        {
-            TotalIncomes = _incomes.Sum(income => income.Amount);
-
+            catch (Exception ex)
+            {
+                _userInterface.DisplayMessage($"Error Adding expense: {ex.Message}");
+            }
         }
 
         public void UpdateExpense(int expenseNumber)
         {
-            expenseNumber--;
-            Expense expense = _expenses[expenseNumber];
-            decimal oldAmount = expense.Amount;
-            _userInterface.DisplayMessage("Enter new Amount:");
-            decimal newAmount = _userInterface.ReadDecimal(0);
-            _userInterface.DisplayMessage("Enter new Source:");
-            string newSource = _userInterface.ReadString();
-            DateTime newDate = _userInterface.ReadDate();
-            _expenses[expenseNumber] = new Expense(newAmount, newSource, newDate);
-            updateBalance();
-            updateTotalExpenses();
-            if (category_budget.ContainsKey(expense.Category))
+            try
             {
-                category_budget[expense.Category] = new KeyValuePair<decimal, decimal>(category_budget[expense.Category].Key + (newAmount - oldAmount), category_budget[expense.Category].Value);
-                if (category_budget[expense.Category].Key + 100 >= category_budget[expense.Category].Value) budgetExceeded?.Invoke(new BudgetEventArgs() { TotalExpenses = category_budget[expense.Category].Key, buget = category_budget[expense.Category].Value, categoryName = expense.Category });
+                expenseNumber--;
+                Expense expense = _expenses[expenseNumber];
+                decimal oldAmount = expense.Amount;
+                _userInterface.DisplayMessage("Enter new Amount:");
+                decimal newAmount = _userInterface.ReadDecimal(0);
+                _userInterface.DisplayMessage("Enter new Source:");
+                string newSource = _userInterface.ReadString();
+                DateTime newDate = _userInterface.ReadDate();
+                _expenses[expenseNumber] = new Expense(newAmount, newSource, newDate);
+                UpdateBalance();
+                UpdateTotalExpenseAmount();
+                if (CategoryBudget.ContainsKey(expense.Category))
+                {
+                    var currentBudget = CategoryBudget[expense.Category];
+                    var updatedExpenses = currentBudget.Key + expense.Amount;
+                    CategoryBudget[expense.Category] = new KeyValuePair<decimal, decimal>(updatedExpenses, currentBudget.Value);
+                    if (updatedExpenses + 100 >= currentBudget.Value)
+                    {
+                        BudgetExceeded?.Invoke(new BudgetEventArgs
+                        {
+                            TotalExpenses = updatedExpenses,
+                            budget = currentBudget.Value,
+                            categoryName = expense.Category
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _userInterface.DisplayMessage($"Error updating expense: {ex.Message}");
             }
 
         }
         public void DeleteExpense(int ExpenseNumber)
         {
-            Expense expense = _expenses[ExpenseNumber - 1];
-            _expenses.Remove(expense);
-            updateTotalExpenses();
-            if (category_budget.ContainsKey(expense.Category))
+            try
             {
-                category_budget[expense.Category] = new KeyValuePair<decimal, decimal>(category_budget[expense.Category].Key - expense.Amount, category_budget[expense.Category].Value);
-                if (category_budget[expense.Category].Key + 100 >= category_budget[expense.Category].Value) budgetExceeded?.Invoke(new BudgetEventArgs() { TotalExpenses = category_budget[expense.Category].Key, buget = category_budget[expense.Category].Value, categoryName = expense.Category });
+                Expense expense = _expenses[ExpenseNumber - 1];
+                _expenses.Remove(expense);
+                UpdateTotalExpenseAmount();
+                if (CategoryBudget.ContainsKey(expense.Category))
+                {
+                    var currentBudget = CategoryBudget[expense.Category];
+                    var updatedExpenses = currentBudget.Key - expense.Amount;
+                    CategoryBudget[expense.Category] = new KeyValuePair<decimal, decimal>(updatedExpenses, currentBudget.Value);
+                    if (updatedExpenses + 100 >= currentBudget.Value)
+                    {
+                        BudgetExceeded?.Invoke(new BudgetEventArgs
+                        {
+                            TotalExpenses = updatedExpenses,
+                            budget = currentBudget.Value,
+                            categoryName = expense.Category
+                        });
+                    }
+                }
             }
-
+            catch(Exception ex)
+            {
+                _userInterface.DisplayMessage($"Error Deleting expense: {ex.Message}");
+            }
         }
 
         public void AddCategoryBudget()
         {
             _userInterface.DisplayMessage("Enter Category Name");
             string categoryName = _userInterface.ReadString();
-            while (!categorys.Contains(categoryName))
+            while (!Categories.Contains(categoryName))
             {
                 _userInterface.DisplayMessage("there is no category with this Name");
                 categoryName = _userInterface.ReadString();
             }
             _userInterface.DisplayMessage("Enter Budget:");
             decimal budget = _userInterface.ReadDecimal();
-            category_budget[categoryName] = new KeyValuePair<decimal, decimal>(0, budget);
+            CategoryBudget[categoryName] = new KeyValuePair<decimal, decimal>(0, budget);
 
         }
-        private void updateBalance()
+        private void UpdateBalance()
         {
             Balance = _incomes.Sum(Income => Income.Amount) - _expenses.Sum(Expense => Expense.Amount);
         }
-        private async void BudgetExceededNotify(BudgetEventArgs args)
+        private void UpdateTotalIncomeAmount()
+        {
+            TotalIncomes = _incomes.Sum(income => income.Amount);
+
+        }
+        private  void UpdateTotalExpenseAmount()
+        {
+            TotalExpenses = _expenses.Sum(expense => expense.Amount);
+
+        }
+        private async Task BudgetExceededNotify(BudgetEventArgs args)
         {
 
-             Task.Run(()=> _userInterface.DisplayMessage($"you are near or Exceeded you have spend {args.TotalExpenses} of the Categroy {args.categoryName} with Buget {args.buget} for this category"));
+             await Task.Run(()=> _userInterface.DisplayMessage($"you are near or Exceeded you have spend {args.TotalExpenses} of the Categroy {args.categoryName} with Buget {args.budget} for this category"));
         }
     }
 }
