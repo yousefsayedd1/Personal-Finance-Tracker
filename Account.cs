@@ -1,4 +1,5 @@
-﻿using PersonalFinanceTracker.Interfaces;
+﻿using PersonalFinanceTracker.EventsArgs;
+using PersonalFinanceTracker.Interfaces;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text.Json.Serialization;
@@ -12,13 +13,27 @@ namespace PersonalFinanceTracker
 
 
         public Account() {
+            ID = Ulid.NewUlid().ToString();
+
             BudgetExceeded += BudgetExceededNotify;
         }
-        public Account(IUserInterface userInterface) : this()
+        public Account(string id, List<Income> incomes, List<Expense> expenses, List<string> categories, Dictionary<string, KeyValuePair<decimal, decimal>> categoryBudget) 
         {
-            _userInterface = userInterface;
-        }
+            ID = id;
+            _incomes = incomes;
+            _expenses = expenses;
+            Categories = categories;
+            CategoryBudget = categoryBudget;
 
+            updateCategoryBudget(_expenses);
+            UpdateBalance();
+            UpdateTotalExpenseAmount();
+            UpdateTotalIncomeAmount();
+            BudgetExceeded += BudgetExceededNotify;
+
+        }
+        [JsonInclude]
+        public string ID { get; private set; }
         [JsonInclude]
         [JsonPropertyName("Incomes")]
         private List<Income> _incomes = new List<Income>();
@@ -48,6 +63,10 @@ namespace PersonalFinanceTracker
         public void DisplayTransactions(IEnumerable<Transaction> transactions) 
         {
             _userInterface.DisplayTransactions(transactions);
+        }
+        public void Displaycategories()
+        {
+            _userInterface.DisplayCategories(Categories);
         }
         public void AddIncome(Income income)
         {
@@ -89,7 +108,7 @@ namespace PersonalFinanceTracker
                 _userInterface.DisplayMessage("Enter new Source:");
                 string newSource = _userInterface.ReadString();
                 DateTime newDate = _userInterface.ReadDate();
-                _incomes[incomeNumber] = new Income(newAmount, newSource, newDate);
+                _incomes[incomeNumber] = new Income(_incomes[incomeNumber].Id,newAmount, newSource, newDate);
                 UpdateBalance();
                 UpdateTotalIncomeAmount();
             }
@@ -139,7 +158,7 @@ namespace PersonalFinanceTracker
                 _userInterface.DisplayMessage("Enter new Source:");
                 string newSource = _userInterface.ReadString();
                 DateTime newDate = _userInterface.ReadDate();
-                _expenses[expenseNumber] = new Expense(newAmount, newSource, newDate);
+                _expenses[expenseNumber] = new Expense(_expenses[expenseNumber].Id,newAmount, newSource, newDate);
                 UpdateBalance();
                 UpdateTotalExpenseAmount();
                 if (CategoryBudget.ContainsKey(expense.Category))
@@ -224,7 +243,30 @@ namespace PersonalFinanceTracker
         private async Task BudgetExceededNotify(BudgetEventArgs args)
         {
 
-             await Task.Run(()=> _userInterface.DisplayMessage($"you are near or Exceeded you have spend {args.TotalExpenses} of the Categroy {args.categoryName} with Buget {args.budget} for this category"));
+                await Task.Run(()=> _userInterface.DisplayMessage($"you are near or Exceeded you have spend {args.TotalExpenses} of the Categroy {args.categoryName} with Buget {args.budget} for this category"));
+                
+            
+        }
+        private void updateCategoryBudget(List<Expense> expenses)
+        {
+            foreach (Expense expense in expenses)
+            {
+                if (CategoryBudget.ContainsKey(expense.Category))
+                {
+                    var currentBudget = CategoryBudget[expense.Category];
+                    var updatedExpenses = currentBudget.Key + expense.Amount;
+                    CategoryBudget[expense.Category] = new KeyValuePair<decimal, decimal>(updatedExpenses, currentBudget.Value);
+                    if (updatedExpenses + 100 >= currentBudget.Value)
+                    {
+                        BudgetExceeded?.Invoke(new BudgetEventArgs
+                        {
+                            TotalExpenses = updatedExpenses,
+                            budget = currentBudget.Value,
+                            categoryName = expense.Category
+                        });
+                    }
+                }
+            }
         }
     }
 }

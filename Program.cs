@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Numerics;
-using System.Security.Principal;
-using PersonalFinanceTracker.Interfaces;
+﻿using PersonalFinanceTracker.Interfaces;
+using PersonalFinanceTracker.AdoSqlRepo;
+using PersonalFinanceTracker.Enums;
+using PersonalFinanceTracker.UserInterfaces;
 
 namespace PersonalFinanceTracker
 {
@@ -10,9 +10,16 @@ namespace PersonalFinanceTracker
         static void Main(string[] args)
         {
             IUserInterface _userInterface = new ConsoleUserInterface();
-            IRepository _jsonRepo = new JsonRepo();
-            App app = new App(_userInterface, _jsonRepo, new Account(_userInterface));
+            
+            // sql server database
+            IRepository _SqlRepo = new SqlRepository();
+            App app = new App(_userInterface, _SqlRepo);
+
+            // json file database
+          /*  IRepository _JsonRepo = new JsonRepo();
+            App app = new App(_userInterface, _JsonRepo);*/
             app.Run();
+
 
         }
     }
@@ -21,18 +28,17 @@ namespace PersonalFinanceTracker
         private IUserInterface _userInterface;
         private IRepository _repository;
         private Account _userAccount;
-        public App(IUserInterface userInterface, IRepository repository, Account userAccount)
+        public App(IUserInterface userInterface, IRepository repository)
         {
             _userInterface = userInterface;
             
             _repository = repository;
-            _userAccount = userAccount;
+            _userAccount = _repository.GetAccountById("01JFN6P40XKVTR7WTJE7EKF48T");
         }
         public void Run()
         {
             // task: add validation on date input
             int numberOfChoices = 11;
-            _userAccount =  _repository.GetAccount();
             _userAccount._userInterface = _userInterface;
             while (true) {
             int numberOfIncomes = _userAccount.incomes.Count();
@@ -85,6 +91,7 @@ namespace PersonalFinanceTracker
                         _userAccount.DeleteExpense(expenseNumber);
                         break;
                     case UserNeed.SetBudget:
+                        _userInterface.DisplayCategories(_userAccount.Categories);
                         _userAccount.AddCategoryBudget();
                         break;
                     case UserNeed.GeneralReport:
@@ -103,32 +110,17 @@ namespace PersonalFinanceTracker
                         _userInterface.DisplayMessage("Invalid choice. Please select a valid option.");
                         break;
                 }
+                _repository.SaveAccount(_userAccount);
                 _userInterface.DisplayMessage("Wanna do something more? (Y/N)");
                 if (_userInterface.ReadString().ToUpper() == "N")
                 {
                     break;
                 }
                 Console.Clear();
-                _repository.SaveAccount(_userAccount);
             }
             
         }
            
-    }
-    enum UserNeed
-    {
-        AddIncome = 1,
-        DisplayIncomes,
-        UpdateIncome,
-        DeleteIncome,
-        AddExpense,
-        DisplayExpense,
-        UpdateExpense,
-        DeleteExpense,
-        SetBudget,
-        GeneralReport,
-        DateBasedReport,
-
     }
 
 }

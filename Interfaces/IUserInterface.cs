@@ -4,6 +4,7 @@
     {
         void DisplayMessage(string message);
         void DisplayMenu();
+        void DisplayCategories(List<string> categories);
         public Income ReadIncomeFromUser();
         public Expense ReadExpenceFromUser();
 
