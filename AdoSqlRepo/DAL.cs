@@ -109,7 +109,7 @@ namespace PersonalFinanceTracker.AdoSqlRepo
                     }
                     try
                     {
-                        sqlCommand.CommandText = $"insert into category values ('{income.Category}',Null,'{account.ID}',null,null)";
+                        sqlCommand.CommandText = $"insert into category values ('{income.Category}',Null,'{account.ID}')";
                         sqlCommand.ExecuteNonQuery();
                     }
                     catch { }
@@ -161,7 +161,7 @@ namespace PersonalFinanceTracker.AdoSqlRepo
                     }
                     try
                     {
-                        sqlCommand.CommandText = $"insert into category values ('{expense.Category}',Null,'{account.ID}',null,null)";
+                        sqlCommand.CommandText = $"insert into category values ('{expense.Category}',Null,'{account.ID}')";
                         sqlCommand.ExecuteNonQuery();
                     }
                     catch { }
